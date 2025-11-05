@@ -1,44 +1,65 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-body, html {
+/* ============================
+   Estrutura base
+============================ */
+html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    width: 100%;
     font-family: 'Poppins', sans-serif;
     color: #333;
-    height: 100%;
-    overflow: hidden;
+    background: #000;
+}
+
+/* Use um contêiner flex apenas para centralizar o conteúdo visualmente */
+body {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden; /* será alterado em media queries para mobile */
 }
 
+/* ============================
+   Vídeo de fundo - preenchimento seguro
+   (cobre 100% sem gerar barras pretas)
+============================ */
 #background-video {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: cover;
-    z-index: -2;
+    transform: translate(-50%, -50%);
+    z-index: 0;                 /* vídeos ficam atrás da overlay e do conteúdo */
     will-change: transform, opacity;
-    transform: translateZ(0);
     backface-visibility: hidden;
+    pointer-events: none;       /* permite interagir com a página por cima */
 }
 
-/* camada extra para aplicar efeito no vídeo */
+/* ============================
+   Camada de escurecimento (overlay)
+============================ */
 .background-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4); /* substitui o brightness */
-    backdrop-filter: blur(2px);      /* blur mais leve */
-    z-index: -1;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 1;                 /* acima do vídeo, abaixo do conteúdo */
+    pointer-events: none;
 }
 
+/* ============================
+   Container principal (conteúdo)
+============================ */
 .login-container {
-    background-color: rgba(255, 255, 255, 0.6); /* fundo translúcido */
+    position: relative;
+    z-index: 2;                 /* acima de tudo visualmente */
+    background-color: rgba(255, 255, 255, 0.6);
     padding: 2.5rem;
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
@@ -48,23 +69,21 @@ body, html {
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     animation: fadeIn 1s ease-in-out;
+    overflow: hidden;
 }
 
-/* textos sólidos */
+/* textos sólidos dentro do container */
 .login-container * {
     color: #333 !important;
     opacity: 1 !important;
 }
 
+/* ============================
+   Tipografia e animação
+============================ */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 h2 {
@@ -76,6 +95,9 @@ h2 {
     font-weight: 700;
 }
 
+/* ============================
+   Avisos e seções
+============================ */
 .aviso-uso, .aviso-lgpd {
     background-color: rgba(0, 128, 0, 0.1);
     padding: 1.5rem;
@@ -99,6 +121,9 @@ h2 {
     color: #555 !important;
 }
 
+/* ============================
+   Checkbox e botões
+============================ */
 .checkbox-container {
     display: flex;
     align-items: center;
@@ -144,16 +169,9 @@ h2 {
     cursor: pointer;
 }
 
-.btn-conectar.ativo:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.btn-conectar.ativo:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
+/* ============================
+   Mensagens de erro
+============================ */
 .erro {
     background-color: rgba(255, 0, 0, 0.1);
     border-left: 6px solid red;
@@ -165,15 +183,40 @@ h2 {
     text-align: left;
 }
 
+/* ============================
+   Responsividade
+============================ */
+/* Larguras até 1024px */
+@media (max-width: 1024px) {
+    body {
+        overflow-y: auto;
+        align-items: flex-start; /* evita centralizar vertical com muito conteúdo */
+    }
+    .login-container {
+        width: 90%;
+        max-width: 500px;
+        padding: 2rem;
+        margin: 4rem auto;
+    }
+}
+
+/* Tablets / smartphones médios */
 @media (max-width: 768px) {
     .login-container {
-        padding: 1.5rem;
+        padding: 1.8rem;
+        width: 92%;
         max-width: 95%;
+        margin: 3rem auto;
     }
 
     h2 {
         font-size: 1.8em;
         margin-bottom: 1.5rem;
+    }
+
+    .aviso-uso, .aviso-lgpd {
+        font-size: 0.9rem;
+        padding: 1.2rem;
     }
 
     .btn-conectar {
@@ -183,5 +226,42 @@ h2 {
 
     .checkbox-container {
         justify-content: center;
+        gap: 10px;
+    }
+}
+
+/* ============================
+   Centralização apenas em celulares
+============================ */
+@media (max-width: 768px) {
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .login-container {
+        position: relative;
+        max-width: 90%;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        transform: scale(1);
+        transition: transform 0.3s ease;
+    }
+
+    /* Ajuste de zoom para telas menores */
+    @media (max-height: 700px) {
+        .login-container {
+            transform: scale(0.9);
+        }
+    }
+
+    @media (max-height: 600px) {
+        .login-container {
+            transform: scale(0.8);
+        }
     }
 }
